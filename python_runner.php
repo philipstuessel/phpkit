@@ -1,6 +1,29 @@
 <?php
-// v3.0
-$configFilePath = __DIR__ . "/pyconfig.json";
+// v4.0
+
+function pyConfig() {
+    $path = getcwd();
+    $path = $path."/.pyconfig.json";
+    if (file_exists($path)) {
+        $content = file_get_contents($path);
+        $jsonData = json_decode($content);
+        if (is_array($jsonData)) {
+            return $jsonData[0];
+        } elseif (is_object($jsonData) && $jsonData instanceof stdClass) {
+            return $path;
+        } else {
+            if (file_exists($path)) {
+                return $content;
+            } else {
+                return __DIR__ . "/pyconfig.json";
+            }
+        }
+    } else {
+        return __DIR__ . "/pyconfig.json";
+    }
+}
+
+$configFilePath = pyConfig();
 
 function loadConfig($configFilePath)
 {
@@ -30,6 +53,7 @@ function runPython($pythonScriptPath)
         return "Error PythonAPI executing Python script. Return code: $returnCode\n" . implode("\n", $output);
     }
 }
+
 
 
 function script($script)

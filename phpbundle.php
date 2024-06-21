@@ -1,5 +1,5 @@
 <?php
-# v1.1
+# v1.2
 class Json {
     private $data;
     private $file;
@@ -66,6 +66,7 @@ class Open {
     }
     
     function write($content) {
+        $this->create();
         $w_file = fopen($this->file, "w");
         
         if ($w_file === false) {
@@ -85,9 +86,20 @@ class Open {
         if ($this->type == "r") {
             return (new Json($this->file))->getall();
         } elseif ($this->type == "w") {
+            $this->create();
             return (new Json($this->file))->save($value);
         }
     }
+    function create() {
+        $folder = dirname($this->file);
+        if (!is_dir($folder)) {
+            if (!mkdir($folder, 0777, true)) {
+                echo "Error creating folder.";
+                return false;
+            }
+        }
+    }
+    
 }
     
 function printt($value) {
